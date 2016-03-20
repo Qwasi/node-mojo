@@ -16,5 +16,10 @@
     "node"
   ],
   "author": "Rob Rodriguez",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-bump": "^0.7.0",
+    "grunt-changelog": "^0.3.1"
+  }
 }
