@@ -16,4 +16,4 @@ etc
 *.DS_Store
 ._*
 .c9
-.lib
+lib
