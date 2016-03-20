@@ -26,6 +26,15 @@
 'use strict';
 
 import Client from './client';
-import Member from './member';
 
-export default { Client, Member };
+export default class Member extends Client {
+    static model = 'members';
+    
+    constructor(options) {
+        super(options);
+    }
+    
+    create(doc, callback) {
+        return super.create(Member.model, doc, callback);
+    }
+}

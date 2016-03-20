@@ -23,9 +23,10 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.SOFTWARE
 
-'use strict';
+import debug from 'debug';
 
-import Client from './client';
-import Member from './member';
+const log = debug('qwasi:mojo');
 
-export default { Client, Member };
+log._debug = debug;
+
+export default log;

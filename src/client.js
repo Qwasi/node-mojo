@@ -32,7 +32,9 @@ import promise from 'bluebird';
 import jwt_decode from 'jwt-decode';
 import _ from 'lodash';
 import log from './log';
+import Member from './member';
 
+// Client provides a base crud client for the node-mojo library
 export default class Client extends EventEmitter {
     constructor(options) {
         super();
@@ -40,8 +42,10 @@ export default class Client extends EventEmitter {
         options = options || {};
         
         this.url = options.url;
+        this.version = options.version || 'v1';
         this.client_id = options.client_id;
         this.client_secret = options.client_secret;
+        this.token = options.token;
     }
     
     // login returns a user token, using the client_id and client_secret
@@ -98,7 +102,10 @@ export default class Client extends EventEmitter {
                     return reject(new Error(error));
                 }
                 
+                this.token = body.access_token;
+                
                 log('Client %s authenticated successfully.', creds.username || creds.client_id);
+                
                 resolve(body);
             });
         }).nodeify(callback);
@@ -134,8 +141,201 @@ export default class Client extends EventEmitter {
                     return reject(new Error(error));
                 }
                 log('Client %s session deleted.', owner);
-                return resolve(body);
+                resolve(body);
             });   
         }).nodeify(callback);
+    }
+    
+    // create creates a new document for the given model
+    create(model, doc, callback) {
+        var create_url = util.format('%s/%s/%s', this.url, this.version, model);
+        
+        return new promise((resolve, reject) => {
+           request.post({
+               url: create_url,
+               auth: {
+                   bearer: this.token
+               },
+               json: true,
+               body: doc
+           }, (err, response, body) => {
+              if (err) {
+                  log('create %s failed: %s.', model, err);
+                  return reject(err);
+              }
+              if (response.statusCode >= 400) {
+                  let err = body.error_description || body.error;
+                  log('create %s failed: %s.', model, err);
+                  return reject(err);
+              }
+              log('create %s successful, id=%s.', model, body.id);
+              resolve(body);
+           });
+        }).nodeify(callback);
+    }
+    
+    read(model, id, query, callback) {
+        var read_url = util.format('%s/%s/%s/%s', this.url, this.version, model, id);
+        
+        if (_.isFunction(query)) {
+            callback = query;
+            query = undefined;
+        }
+        
+        return new promise((resolve, reject) => {
+           request.get({
+               url: read_url,
+               auth: {
+                   bearer: this.token
+               },
+               json: true,
+               qs: query
+           }, (err, response, body) => {
+              if (err) {
+                  log('read %s:%s failed: %s.', model, id, err);
+                  return reject(err);
+              }
+              if (response.statusCode >= 400) {
+                  let err = body.error_description || body.error;
+                  log('read %s:%s failed: %s.', model, id, err);
+                  return reject(err);
+              }
+              log('read %s:%s successful.', model, id);
+              resolve(body);
+           });
+        }).nodeify(callback);
+    }
+    
+    update(model, id, doc, callback) {
+        var update_url = util.format('%s/%s/%s/%s', this.url, this.version, model, id);
+        
+        return new promise((resolve, reject) => {
+           request.put({
+               url: update_url,
+               auth: {
+                   bearer: this.token
+               },
+               json: true,
+               body: doc
+           }, (err, response, body) => {
+              if (err) {
+                  log('update %s:%s failed: %s.', model, id, err);
+                  return reject(err);
+              }
+              if (response.statusCode >= 400) {
+                  let err = body.error_description || body.error;
+                  log('update %s:%s failed: %s.', model, id, err);
+                  return reject(err);
+              }
+              log('update %s:%s successful.', model, id);
+              resolve(body);
+           });
+        }).nodeify(callback);
+    }
+    
+    del(model, id, callback) {
+        var del_url = util.format('%s/%s/%s/%s', this.url, this.version, model, id);
+        
+        return new promise((resolve, reject) => {
+           request.put({
+               url: del_url,
+               auth: {
+                   bearer: this.token
+               },
+               json: true
+           }, (err, response, body) => {
+              if (err) {
+                  log('delete %s:%s failed: %s.', model, id, err);
+                  return reject(err);
+              }
+              if (response.statusCode >= 400) {
+                  let err = body.error_description || body.error;
+                  log('delete %s:%s failed: %s.', model, id, err);
+                  return reject(err);
+              }
+              log('delete %s:%s successful.', model, id);
+              resolve(body);
+           });
+        }).nodeify(callback);
+    }
+    
+    search(model, options, callback) {
+        var search_url = util.format('%s/%s/%s', this.url, this.version, model);
+        
+        if (_.isFunction(options)) {
+            callback = options;
+            options = undefined;
+        }
+        
+        options = options || {};
+        
+        return new promise((resolve, reject) => {
+           request.get({
+               url: search_url,
+               auth: {
+                   bearer: this.token
+               },
+               json: true,
+               qs: options
+           }, (err, response, body) => {
+              if (err) {
+                  log('search %s:%s failed: %s.', model, err);
+                  return reject(err);
+              }
+              if (response.statusCode >= 400) {
+                  let err = body.error_description || body.error;
+                  log('search %s failed: %s.', model, err);
+                  return reject(err);
+              }
+              log('search %s successful.', model);
+              resolve(body);
+           });
+        }).nodeify(callback);
+    }
+    
+    count(model, options, callback) {
+        var count_url = util.format('%s/%s/%s/count', this.url, this.version, model);
+        
+        if (_.isFunction(options)) {
+            callback = options;
+            options = undefined;
+        }
+        
+        options = options || {};
+        
+        return new promise((resolve, reject) => {
+           request.get({
+               url: count_url,
+               auth: {
+                   bearer: this.token
+               },
+               json: true,
+               qs: options
+           }, (err, response, body) => {
+              if (err) {
+                  log('count %s:%s failed: %s.', model, err);
+                  return reject(err);
+              }
+              if (response.statusCode >= 400) {
+                  let err = body.error_description || body.error;
+                  log('count %s failed: %s.', model, err);
+                  return reject(err);
+              }
+              log('count %s successful.', model);
+              resolve(body);
+           });
+        }).nodeify(callback);
+    }
+    
+    // bearer returns a new copy of the client using the specified bearer token
+    bearer(token) {
+        let bearer = this.prototype.constructor.call(null, this);
+        bearer.token = token;
+        return bearer;
+    }
+    
+    // member returns the member api service
+    get member() {
+        return new Member(this);
     }
 }
