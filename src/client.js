@@ -32,7 +32,7 @@ import promise from 'bluebird';
 import jwt_decode from 'jwt-decode';
 import _ from 'lodash';
 import log from './log';
-import Member from './member';
+import Members from './members';
 
 // Client provides a base crud client for the node-mojo library
 export default class Client extends EventEmitter {
@@ -336,6 +336,6 @@ export default class Client extends EventEmitter {
     
     // member returns the member api service
     get members() {
-        return new Member(this);
+        return new Members(this);
     }
 }
