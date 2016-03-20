@@ -26,8 +26,9 @@
 'use strict';
 
 import Client from './client';
+import _ from 'lodash';
 
-export default class Member extends Client {
+export default class Members extends Client {
     static model = 'members';
     
     constructor(options) {
@@ -35,6 +36,27 @@ export default class Member extends Client {
     }
     
     create(doc, callback) {
-        return super.create(Member.model, doc, callback);
+        return super.create(Members.model, doc, callback);
+    }
+    
+    fetch(id, options, callback) {
+        return super.read(Members.model, id, options, callback);
+    }
+    
+    update(id, update, callback) {
+        return super.update(Members.model, id, update, callback);
+    }
+    
+    remove(id, callback) {
+        return super.del(Members.model, id, callback);
+    }
+    
+    find(query, callback) {
+        if (_.isString(query)) {
+            query = {
+                filter: query
+            };
+        }
+        return super.search(Members.model, query, callback);
     }
 }

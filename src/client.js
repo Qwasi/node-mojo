@@ -174,12 +174,12 @@ export default class Client extends EventEmitter {
         }).nodeify(callback);
     }
     
-    read(model, id, query, callback) {
+    read(model, id, options, callback) {
         var read_url = util.format('%s/%s/%s/%s', this.url, this.version, model, id);
         
-        if (_.isFunction(query)) {
-            callback = query;
-            query = undefined;
+        if (_.isFunction(options)) {
+            callback = options;
+            options = undefined;
         }
         
         return new promise((resolve, reject) => {
@@ -189,7 +189,7 @@ export default class Client extends EventEmitter {
                    bearer: this.token
                },
                json: true,
-               qs: query
+               qs: options
            }, (err, response, body) => {
               if (err) {
                   log('read %s:%s failed: %s.', model, id, err);
@@ -335,7 +335,7 @@ export default class Client extends EventEmitter {
     }
     
     // member returns the member api service
-    get member() {
+    get members() {
         return new Member(this);
     }
 }

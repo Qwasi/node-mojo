@@ -26,6 +26,6 @@
 'use strict';
 
 import Client from './client';
-import Member from './member';
+import Members from './member';
 
-export default { Client, Member };
+export default { Client, Members };
