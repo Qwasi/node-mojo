@@ -28,7 +28,7 @@
 import Client from './client';
 import _ from 'lodash';
 
-export default class Members extends Client {
+class Members extends Client {
     static model = 'members';
     
     constructor(options) {
@@ -60,3 +60,5 @@ export default class Members extends Client {
         return super.search(Members.model, query, callback);
     }
 }
+
+export default Members;
