@@ -1,6 +1,6 @@
 {
   "name": "node-mojo",
-  "version": "0.0.1-dev.100",
+  "version": "0.0.2-beta.1",
   "description": "Qwasi Mojo nodejs client",
   "main": "./lib",
   "scripts": {
