@@ -1,4 +1,7 @@
+
 module.exports = function(grunt) {
+    require("load-grunt-tasks")(grunt);
+
     // Do grunt-related things in here
 
     var semverUtils = require('semver-utils');
@@ -44,7 +47,4 @@ module.exports = function(grunt) {
             }
         }
     });
-
-    grunt.loadNpmTasks('grunt-bump');
-    grunt.loadNpmTasks('grunt-changelog');
 };

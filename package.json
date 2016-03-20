@@ -1,10 +1,13 @@
 {
   "name": "node-mojo",
-  "version": "0.0.1",
+  "version": "0.0.1-dev.100",
   "description": "Qwasi Mojo nodejs client",
-  "main": "index.js",
+  "main": "./lib",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prebuild": "rimraf lib",
+    "prepublish": "npm run build",
+    "build": "babel ./src --out-dir ./lib"
   },
   "repository": {
     "type": "git",
@@ -18,8 +21,18 @@
   "author": "Rob Rodriguez",
   "license": "MIT",
   "devDependencies": {
+    "babel-cli": "^6.6.5",
+    "babel-preset-es2015": "^6.6.0",
+    "babel-preset-stage-0": "^6.5.0",
     "grunt": "^0.4.5",
     "grunt-bump": "^0.7.0",
-    "grunt-changelog": "^0.3.1"
+    "grunt-changelog": "^0.3.1",
+    "grunt-cli": "^0.1.13",
+    "load-grunt-tasks": "^3.4.1",
+    "rimraf": "^2.5.2",
+    "semver-utils": "^1.1.1"
+  },
+  "dependencies": {
+    "request": "^2.69.0"
   }
 }
