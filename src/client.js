@@ -328,14 +328,14 @@ export default class Client extends EventEmitter {
     
     // bearer returns a new copy of the client using the specified bearer token
     bearer(token) {
-        let bearer = this.prototype.constructor.call(null, this);
-        bearer.token = token;
-        return bearer;
+        let client = new Client(this);
+        client.token = token || client.token;
+        return client;
     }
     
     // member returns the member api service
     get members() {
         const Members = require('./members');
-        return new Members(this);
+        return new Members.default(this);
     }
 }
